@@ -1,0 +1,16 @@
+fecha,producto,categoria,cantidad,precio_unitario
+2026-09-01,Playera,Ropa,5,250
+2026-09-01,Taza,Hogar,10,80
+2026-09-02,Playera,Ropa,3,250
+2026-09-02,Gorra,Ropa,7,150
+2026-09-03,Taza,Hogar,4,80
+2026-09-03,Cuaderno,Papeleria,12,45
+2026-09-04,Playera,Ropa,6,250
+2026-09-04,Lampara,Hogar,2,350
+2026-09-05,Gorra,Ropa,5,150
+2026-09-05,Cuaderno,Papeleria,8,45
+2026-09-06,Taza,Hogar,9,80
+2026-09-06,Playera,Ropa,4,250
+2026-09-07,Lampara,Hogar,3,350
+2026-09-07,Gorra,Ropa,6,150
+2026-09-08,Cuaderno,Papeleria,15,45

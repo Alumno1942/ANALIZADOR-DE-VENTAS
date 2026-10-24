@@ -1,47 +1,61 @@
 """
 App web de análisis de ventas con Streamlit.
-El usuario sube un CSV y la app genera resumen + gráficas automáticamente.
 Autor: Gadiel
 """
 
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Analizador de Ventas", page_icon="📊")
+st.set_page_config(page_title="Mis Ventas", page_icon="🧡", layout="wide")
 
-st.title("📊 Analizador de Ventas")
-st.write("Sube tu archivo CSV de ventas y obtén un reporte automático.")
+st.markdown(
+    """
+    <style>
+    .block-container { padding-top: 2.5rem; }
+    h1 { font-weight: 800; }
+    [data-testid="stMetric"] {
+        background-color: #FDE9D0;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #F3C98B;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-# El usuario sube su archivo desde el navegador
-archivo = st.file_uploader("Sube tu archivo CSV", type=["csv"])
+st.title("Mis Ventas")
+st.write("Sube tu archivo de ventas y mira cómo te fue, sin fórmulas ni vueltas.")
+
+archivo = st.file_uploader("Arrastra tu CSV aquí", type=["csv"])
 
 if archivo is not None:
     df = pd.read_csv(archivo)
 
-    # Validamos que tenga las columnas que esperamos
     columnas_necesarias = {"fecha", "producto", "categoria", "cantidad", "precio_unitario"}
     if not columnas_necesarias.issubset(df.columns):
-        st.error(
-            f"Tu CSV debe tener estas columnas: {', '.join(columnas_necesarias)}"
-        )
+        st.error(f"Tu archivo debe tener estas columnas: {', '.join(columnas_necesarias)}")
     else:
         df["total"] = df["cantidad"] * df["precio_unitario"]
 
-        st.subheader("Resumen general")
         col1, col2, col3 = st.columns(3)
-        col1.metric("Total de ventas", f"${df['total'].sum():,.2f}")
-        col2.metric("Transacciones", len(df))
-        col3.metric("Producto top", df.groupby("producto")["cantidad"].sum().idxmax())
+        col1.metric("Total vendido", f"${df['total'].sum():,.2f}")
+        col2.metric("Ventas registradas", len(df))
+        col3.metric("Lo que más se vende", df.groupby("producto")["cantidad"].sum().idxmax())
 
-        st.subheader("Ventas por categoría")
-        resumen_categoria = df.groupby("categoria")["total"].sum().sort_values(ascending=False)
-        st.bar_chart(resumen_categoria)
+        st.write("")
 
-        st.subheader("Ventas por día")
-        resumen_dia = df.groupby("fecha")["total"].sum()
-        st.line_chart(resumen_dia)
+        tab1, tab2, tab3 = st.tabs(["Por categoría", "Por día", "Tabla completa"])
 
-        st.subheader("Datos completos")
-        st.dataframe(df)
+        with tab1:
+            resumen_categoria = df.groupby("categoria")["total"].sum().sort_values(ascending=False)
+            st.bar_chart(resumen_categoria, color="#D97706")
+
+        with tab2:
+            resumen_dia = df.groupby("fecha")["total"].sum()
+            st.line_chart(resumen_dia, color="#D97706")
+
+        with tab3:
+            st.dataframe(df, use_container_width=True)
 else:
-    st.info("👆 Sube un archivo CSV para comenzar. Debe tener las columnas: fecha, producto, categoria, cantidad, precio_unitario")
+    st.caption("Tu archivo debe tener las columnas: fecha, producto, categoria, cantidad, precio_unitario")
